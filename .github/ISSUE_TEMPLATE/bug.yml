@@ -1,0 +1,15 @@
+name: Fehler melden
+description: Technischen oder fachlichen Fehler in einem Modell melden
+title: "[Bug] "
+body:
+  - type: input
+    id: model
+    attributes: {label: Modell, placeholder: z. B. Chemisches Gleichgewicht}
+    validations: {required: true}
+  - type: textarea
+    id: problem
+    attributes: {label: Beobachtung, description: Was passiert und was wäre erwartet?}
+    validations: {required: true}
+  - type: input
+    id: device
+    attributes: {label: Gerät/Browser, placeholder: z. B. iPad / Safari}

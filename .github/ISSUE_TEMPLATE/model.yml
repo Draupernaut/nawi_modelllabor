@@ -1,0 +1,19 @@
+name: Modell vorschlagen
+description: Idee für ein neues Chemie- oder Biologiemodell
+title: "[Modellidee] "
+body:
+  - type: input
+    id: topic
+    attributes: {label: Thema}
+    validations: {required: true}
+  - type: dropdown
+    id: subject
+    attributes: {label: Fach, options: [Chemie, Biologie]}
+    validations: {required: true}
+  - type: textarea
+    id: goal
+    attributes: {label: Lernziel / untersuchbare Frage}
+    validations: {required: true}
+  - type: textarea
+    id: variables
+    attributes: {label: Denkbare veränderbare Größen}

@@ -1,0 +1,1 @@
+(()=>{let paused=false;const pause=document.querySelector('#pauseBtn'),reset=document.querySelector('#resetBtn');pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Weiter':'Pause'});reset.addEventListener('click',()=>{paused=false;pause.textContent='Pause'});})();
