@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07101c">
+<title>Reaktionsgeschwindigkeit & Kollisionen · NaWi-Modelllabor</title>
+<link rel="stylesheet" href="../../../assets/model-base.css">
+<link rel="stylesheet" href="model.css">
+</head>
+<body>
+<main class="model-shell" id="appShell">
+  <header class="model-head">
+    <div>
+      <a class="back" href="../../../">← NaWi-Modelllabor</a>
+      <div class="eyebrow">Chemie · interaktives Stoßmodell</div>
+      <h1>Reaktionsgeschwindigkeit & Kollisionen</h1>
+      <p class="model-note intro">Untersuche, warum Temperatur, Konzentration und Aktivierungsenergie die Geschwindigkeit der Modellreaktion <strong>A + B → C</strong> verändern.</p>
+    </div>
+    <div class="head-actions">
+      <button id="playBtn" class="primary">⏸ Pause</button>
+      <button id="stepBtn">⏭ 0,5 s</button>
+      <button id="presentBtn">▣ Präsentation</button>
+    </div>
+  </header>
+
+  <section class="quick-presets" aria-label="Versuche laden">
+    <span class="quick-label">Versuch laden</span>
+    <button data-preset="base" class="active">Ausgangsversuch</button>
+    <button data-preset="hot">Temperatur ↑</button>
+    <button data-preset="dense">Konzentration ↑</button>
+    <button data-preset="catalyst">Katalysator</button>
+  </section>
+
+  <div class="main-grid">
+    <section class="model-card simulation-card">
+      <div class="reaction-line">
+        <div><span class="particle-dot a"></span>A <span class="plus">+</span> <span class="particle-dot b"></span>B</div>
+        <strong>A + B → C</strong>
+        <div><span class="particle-dot c"></span>C</div>
+      </div>
+
+      <div class="status-strip">
+        <div class="status"><small>A-B-Stöße / s</small><strong id="collisionRate">0,0</strong></div>
+        <div class="status"><small>erfolgreich / s</small><strong id="successRate">0,0</strong></div>
+        <div class="status"><small>Erfolgsquote</small><strong id="successShare">0 %</strong></div>
+        <div class="status"><small>Produkte C</small><strong id="productCount">0</strong></div>
+      </div>
+
+      <div class="arena-wrap">
+        <canvas id="arena" aria-label="Teilchensimulation"></canvas>
+        <div class="arena-key"><span><i class="spark fail"></i> Stoß ohne Reaktion</span><span><i class="spark ok"></i> erfolgreicher Stoß</span></div>
+        <div class="temperature-badge"><small>Temperatur</small><strong><span id="tempBadge">350</span> K</strong></div>
+        <div class="catalyst-badge" id="catalystBadge" hidden>Katalysator aktiv · E<sub>A</sub> gesenkt</div>
+      </div>
+    </section>
+
+    <aside class="side-column">
+      <section class="model-card graph-card">
+        <div class="card-head"><div><h2>Produktbildung</h2><p>n(C) im Zeitverlauf</p></div><button id="clearGraphBtn" class="quiet">Graph löschen</button></div>
+        <canvas id="graph"></canvas>
+      </section>
+
+      <section class="model-card observation-card">
+        <h2>Was passiert gerade?</h2>
+        <div class="observation-grid">
+          <div><small>A</small><strong id="aCount">—</strong></div>
+          <div><small>B</small><strong id="bCount">—</strong></div>
+          <div><small>C</small><strong id="cCount">—</strong></div>
+          <div><small>effektive E<sub>A</sub></small><strong id="eaEffective">—</strong></div>
+        </div>
+        <p id="interpretation" class="interpretation">Die Reaktion beginnt.</p>
+      </section>
+    </aside>
+  </div>
+
+  <section class="model-card controls-card classroom-hide">
+    <div class="controls-head">
+      <div><h2>Versuchsbedingungen verändern</h2><p>Ändere immer nur eine Größe, wenn du ihren Einfluss vergleichen möchtest.</p></div>
+      <button id="resetBtn">↺ Ausgangsversuch</button>
+    </div>
+    <div class="controls-grid">
+      <label class="control"><span>Temperatur <output id="tempOut">350 K</output></span><input id="temp" type="range" min="220" max="750" step="10" value="350"><small>höher → schnellere Teilchen und energiereichere Stöße</small></label>
+      <label class="control"><span>Startzahl A <output id="aStartOut">26</output></span><input id="aStart" type="range" min="8" max="50" step="2" value="26"><small>mehr Teilchen im gleichen Raum → mehr mögliche Stöße</small></label>
+      <label class="control"><span>Startzahl B <output id="bStartOut">26</output></span><input id="bStart" type="range" min="8" max="50" step="2" value="26"><small>wirkt hier als zweite Konzentrationsgröße</small></label>
+      <label class="control"><span>Volumen <output id="volumeOut">1,00</output></span><input id="volume" type="range" min="0.65" max="1.40" step="0.05" value="1"><small>kleiner → Teilchen dichter gepackt → häufigere Stöße</small></label>
+      <label class="control"><span>Aktivierungsenergie E<sub>A</sub> <output id="eaOut">44</output></span><input id="ea" type="range" min="20" max="72" step="2" value="44"><small>höher → weniger Stöße besitzen genügend Energie</small></label>
+      <div class="control switch-control"><span>Katalysator</span><label class="switch-row"><input id="catalyst" type="checkbox"><span class="switch-ui"></span><strong id="catalystText">aus</strong></label><small>senkt im Modell E<sub>A</sub> um 30 %, verändert aber nicht die Temperatur</small></div>
+    </div>
+    <div class="apply-row"><button id="applyBtn" class="primary">Mit diesen Startbedingungen neu beginnen</button><span>Temperatur, Volumen, E<sub>A</sub> und Katalysator wirken sofort. Neue Teilchenzahlen werden beim Neustart übernommen.</span></div>
+  </section>
+
+  <details class="model-card classroom-hide assumptions">
+    <summary>Modellannahmen & Grenzen</summary>
+    <div class="model-note">
+      <p><strong>Das Modell zeigt:</strong> Reaktionen benötigen Zusammenstöße geeigneter Reaktionspartner. Höhere Temperatur erhöht hier die mittlere Teilchengeschwindigkeit und damit die Stoßenergie. Eine höhere Teilchendichte erhöht die Stoßhäufigkeit. Eine Reaktion findet nur statt, wenn ein A-B-Stoß die modellhafte Aktivierungsenergie überschreitet und zusätzlich eine günstige Orientierung besitzt.</p>
+      <p><strong>Der Katalysator:</strong> senkt ausschließlich die modellhafte Aktivierungsenergie. Er erhöht weder Temperatur noch Teilchengeschwindigkeit.</p>
+      <p><strong>Das Modell zeigt nicht:</strong> reale Molekülgeometrien, quantenmechanische Potentialflächen oder eine quantitativ korrekte Arrhenius-Kinetik. Die Größen sind didaktisch skaliert; entscheidend sind die qualitativen Zusammenhänge.</p>
+    </div>
+  </details>
+</main>
+<div id="toast" class="toast"></div>
+<script src="model.js"></script>
+</body>
+</html>
