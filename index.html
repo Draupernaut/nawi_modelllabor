@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="NaWi-Modelllabor – interaktive, offene Modelle für den Chemie- und Biologieunterricht.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/site.css">
+  <title>NaWi-Modelllabor</title>
+</head>
+<body>
+  <header class="hero"><div class="hero-inner"><div class="brand-row"><div class="mark" aria-hidden="true">⌬</div><div><p class="eyebrow">Offenes Unterrichtsprojekt</p><h1>NaWi-Modelllabor</h1></div></div><p class="lede">Interaktive Modelle für Chemie und Biologie – direkt im Browser, ohne Schülerkonto und mit transparenten Modellgrenzen.</p><div class="hero-actions"><a class="button primary" href="#modelle">Modelle entdecken</a><a class="button" href="beitragen.html">Modell beitragen</a></div></div></header>
+  <main>
+    <section class="intro-grid" aria-label="Projektprinzipien"><article class="info-card"><span class="icon">⚗️</span><h2>Unterrichtsnah</h2><p>Modelle für Demonstration, Experimentieren und Auswertung – nicht bloß dekorative Animationen.</p></article><article class="info-card"><span class="icon">🔬</span><h2>Modellbewusst</h2><p>Jedes Modell benennt Annahmen, Grenzen und den fachlichen Zweck seiner Vereinfachungen.</p></article><article class="info-card"><span class="icon">🤝</span><h2>Offen, aber geprüft</h2><p>Andere Lehrkräfte können beitragen. Veröffentlicht wird erst nach Review über Pull Requests.</p></article></section>
+    <section id="modelle" class="catalog-section"><div class="section-head"><div><p class="eyebrow">Modellbibliothek</p><h2>Welches Phänomen möchtest du untersuchen?</h2></div><p class="count" id="resultCount" aria-live="polite"></p></div><div class="filters" role="search"><label class="search-field"><span class="sr-only">Modelle durchsuchen</span><input id="searchInput" type="search" placeholder="z. B. Gleichgewicht, Osmose, Enzym …" autocomplete="off"></label><div class="chips" aria-label="Fach filtern"><button class="chip active" data-subject="all">Alle</button><button class="chip" data-subject="chemie">⚗️ Chemie</button><button class="chip" data-subject="biologie">🧬 Biologie</button></div><label class="select-field">Klassenstufe<select id="gradeFilter"><option value="all">Alle</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label></div><div id="catalog" class="catalog" aria-live="polite"></div><div id="emptyState" class="empty" hidden>Keine Modelle passen zu diesem Filter.</div></section>
+    <section class="roadmap"><div><p class="eyebrow">Als Nächstes</p><h2>Geplante Modellfamilien</h2></div><div class="roadmap-grid"><div><b>Chemie</b><span>Reaktionsgeschwindigkeit · Kollisionen · Säure–Base · Elektrochemie</span></div><div><b>Biologie</b><span>Enzyme · Osmose/Diffusion · Räuber–Beute · Evolution/Selektion</span></div></div></section>
+  </main>
+  <footer><div><b>NaWi-Modelllabor</b><span>Offene Modellbibliothek für den naturwissenschaftlichen Unterricht</span></div><div class="footer-links"><a href="beitragen.html">Beitragen</a><a href="lizenzen.html">Lizenzen</a><a href="sicherheit.html">Sicherheit</a></div></footer>
+  <script src="assets/site.js" defer></script>
+</body>
+</html>
