@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07101c">
+<title>Aktionspotenzial am Neuron · NaWi-Modelllabor</title>
+<link rel="stylesheet" href="../../../assets/model-base.css">
+<link rel="stylesheet" href="model.css">
+</head>
+<body>
+<main class="model-shell" id="appShell">
+  <header class="model-head">
+    <div>
+      <a class="back" href="../../../">← NaWi-Modelllabor</a>
+      <div class="eyebrow">Biologie · Neurobiologie</div>
+      <h1>Aktionspotenzial am Neuron</h1>
+      <p class="model-note intro">Verbinde Spannungsverlauf, Ionenströme und die Zustände spannungsabhängiger Na⁺- und K⁺-Kanäle an <strong>einem Membranabschnitt</strong>.</p>
+    </div>
+    <div class="head-actions">
+      <button id="playBtn" class="primary">▶ Aktionspotenzial</button>
+      <button id="stepBtn">⏭ Phase</button>
+      <button id="presentBtn">▣ Präsentation</button>
+    </div>
+  </header>
+
+  <section class="phase-bar" aria-label="Phasen des Aktionspotenzials">
+    <span class="phase-label">Phase</span>
+    <button data-phase="rest" class="active">Ruhe</button>
+    <button data-phase="threshold">Schwelle</button>
+    <button data-phase="depol">Depolarisation</button>
+    <button data-phase="peak">Spitze</button>
+    <button data-phase="repol">Repolarisation</button>
+    <button data-phase="hyper">Hyperpolarisation</button>
+    <button data-phase="return">Rückkehr</button>
+  </section>
+
+  <div class="main-grid">
+    <section class="model-card membrane-card">
+      <div class="membrane-head">
+        <div>
+          <small>Membranpotenzial</small>
+          <strong><span id="voltageBig">−70</span> mV</strong>
+        </div>
+        <div class="state-pill" id="phaseName">Ruhepotenzial</div>
+        <div class="refractory-pill" id="refractoryPill">erregbar</div>
+      </div>
+
+      <div class="membrane-scene" id="membraneScene" aria-label="Schematische Zellmembran mit Ionen und Kanälen">
+        <div class="side-label outside">extrazellulär <span>Na⁺ hoch · K⁺ niedrig</span></div>
+        <div class="side-label inside">intrazellulär <span>K⁺ hoch · Na⁺ niedrig</span></div>
+        <div class="ion-cloud outside-na" aria-hidden="true"></div>
+        <div class="ion-cloud inside-k" aria-hidden="true"></div>
+        <div class="membrane-band">
+          <div class="channel na-channel" id="naChannel"><span>Na⁺</span><i></i><b id="naGate">geschlossen</b></div>
+          <div class="channel k-channel" id="kChannel"><span>K⁺</span><i></i><b id="kGate">geschlossen</b></div>
+          <div class="pump"><span>Na⁺/K⁺-Pumpe</span><small>erhält Gradienten</small></div>
+        </div>
+        <div class="current-arrow" id="naArrow">Na⁺ ↓</div>
+        <div class="current-arrow k" id="kArrow">K⁺ ↑</div>
+        <div class="charge outside-charge" id="outsideCharge">+</div>
+        <div class="charge inside-charge" id="insideCharge">−</div>
+      </div>
+
+      <div class="membrane-status">
+        <div><small>Na⁺-Kanäle</small><strong id="naState">geschlossen, aktivierbar</strong></div>
+        <div><small>K⁺-Kanäle</small><strong id="kState">geschlossen</strong></div>
+        <div><small>dominanter Strom</small><strong id="currentState">Leckströme</strong></div>
+      </div>
+    </section>
+
+    <aside class="side-column">
+      <section class="model-card graph-card">
+        <div class="card-head"><div><h2>Membranpotenzial</h2><p>typischer Verlauf eines Aktionspotenzials</p></div><span class="threshold-key">Schwelle −55 mV</span></div>
+        <canvas id="graph" aria-label="Aktionspotenzialkurve"></canvas>
+        <div class="graph-legend"><span><i class="line voltage"></i>V<sub>m</sub></span><span><i class="line threshold"></i>Schwelle</span></div>
+      </section>
+
+      <section class="model-card explanation-card">
+        <h2 id="explainTitle">Ruhepotenzial</h2>
+        <p id="explainText">Die Membran liegt bei etwa −70 mV. Die spannungsabhängigen Na⁺- und K⁺-Kanäle sind geschlossen. Konzentrationsgradienten und Leckströme ermöglichen das Ruhepotenzial.</p>
+        <div class="cause-box"><small>Entscheidender Mechanismus</small><strong id="causeText">selektive Permeabilität + Ionengradienten</strong></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="model-card stimulus-card classroom-hide">
+    <div class="stimulus-head">
+      <div><h2>Schwelle & Alles-oder-nichts</h2><p>Teste unterschiedlich starke depolarisierende Reize. Ein überschwelliger Reiz verändert die Höhe des Aktionspotenzials nicht.</p></div>
+      <button id="resetBtn">↺ Ruhe</button>
+    </div>
+    <div class="stimulus-grid">
+      <label class="stimulus-control"><span>Reizstärke <output id="stimOut">15 mV</output></span><input id="stimulus" type="range" min="5" max="30" step="1" value="15"><small>modellhafte Depolarisation vom Ruhepotenzial aus</small></label>
+      <div class="stimulus-actions"><button id="stimulateBtn" class="primary">⚡ Reiz auslösen</button><button data-stim="10">unterschwellig</button><button data-stim="15">an der Schwelle</button><button data-stim="25">stark</button></div>
+      <div class="stimulus-result" id="stimulusResult"><small>Ergebnis</small><strong>Reiz wählen und auslösen</strong><span>Ruhe −70 mV · Schwelle −55 mV</span></div>
+    </div>
+  </section>
+
+  <section class="model-card refractory-card classroom-hide">
+    <div>
+      <h2>Refraktärzeit testen</h2>
+      <p>Während eines laufenden Aktionspotenzials kannst du erneut reizen. In der absoluten Refraktärzeit sind viele Na⁺-Kanäle inaktiviert; in der relativen Refraktärzeit ist ein stärkerer Reiz nötig.</p>
+    </div>
+    <div class="refractory-actions"><button id="secondStimBtn">⚡ Jetzt erneut reizen</button><span id="secondStimHint">Starte zuerst ein Aktionspotenzial.</span></div>
+  </section>
+
+  <details class="model-card classroom-hide assumptions">
+    <summary>Modellannahmen & Grenzen</summary>
+    <div class="model-note">
+      <p><strong>Das Modell zeigt:</strong> Schwellenwert und Alles-oder-nichts-Prinzip, schnelle Na⁺-Einstromphase, verzögerten K⁺-Ausstrom, Inaktivierung der Na⁺-Kanäle, Hyperpolarisation und Refraktärzeit. Die Kurve und Kanalzustände sind miteinander gekoppelt.</p>
+      <p><strong>Na⁺/K⁺-Pumpe:</strong> Sie erhält langfristig die Ionengradienten. Die schnelle Repolarisation eines einzelnen Aktionspotenzials entsteht hier durch Na⁺-Kanal-Inaktivierung und K⁺-Ausstrom – nicht dadurch, dass die Pumpe das Membranpotenzial „zurückpumpt“.</p>
+      <p><strong>Vereinfachungen:</strong> Es wird nur ein Membranabschnitt betrachtet. Leckkanäle, einzelne Kanalpopulationen und Ströme werden qualitativ zusammengefasst. Die dargestellten Spannungen und Zeiten sind typische Orientierungswerte, keine Messung eines konkreten Neurons. Die Fortleitung entlang eines Axons ist nicht Teil dieser Ansicht.</p>
+    </div>
+  </details>
+</main>
+<div id="toast" class="toast"></div>
+<script src="model.js"></script>
+</body>
+</html>
