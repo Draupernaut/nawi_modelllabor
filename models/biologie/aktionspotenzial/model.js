@@ -46,7 +46,9 @@
   }
   function phaseToTime(p){return ({rest:.3,threshold:1.15,depol:1.55,peak:2.1,repol:3.2,hyper:4.8,return:6.2})[p]??0}
   function currentPhase(){return document.querySelector('[data-phase].active')?.dataset.phase||'rest'}
-  function setPhase(p,vOverride=null){mode='phase';running=false;manualV=null;manualT=null;$('#playBtn').textContent='▶ Ablauf starten';$('#graphSubtitle').textContent=defaultGraphSubtitle;$$('[data-phase]').forEach(b=>b.classList.toggle('active',b.dataset.phase===p));renderState(p,vOverride??phases[p].v);drawGraph()}
+  function setPhase(p,vOverride=null){
+    mode='phase';running=false;manualV=null;manualT=null;$('#playBtn').textContent='▶ Ablauf starten';$('#graphSubtitle').textContent=defaultGraphSubtitle;$$('[data-phase]').forEach(b=>b.classList.toggle('active',b.dataset.phase===p));renderState(p,vOverride??phases[p].v);const hint=$('#secondStimHint');if(hint)hint.textContent='Starte zuerst einen laufenden Aktionspotenzial-Ablauf.';drawGraph()
+  }
   function renderState(p,v){
     const s=phases[p];$('#voltageBig').textContent=(v<0?'−':'')+Math.round(Math.abs(v));$('#phaseName').textContent=s.label;$('#naState').textContent=s.na;$('#kState').textContent=s.k;$('#currentState').textContent=s.current;$('#naGate').textContent=s.naGate;$('#kGate').textContent=s.kGate;$('#naChannel').className='channel na-channel '+s.naClass;$('#kChannel').className='channel k-channel '+s.kClass;$('#naArrow').classList.toggle('on',s.naArrow);$('#kArrow').classList.toggle('on',s.kArrow);$('#explainTitle').textContent=s.title;$('#explainText').textContent=s.text;$('#causeText').textContent=s.cause;
     const rp=$('#refractoryPill');rp.textContent=s.refrac;rp.className='refractory-pill'+(s.refrac.startsWith('absolute')?' absolute':s.refrac.startsWith('relative')?' relative':'');
@@ -60,7 +62,7 @@
     const st=stateAt(t);$$('[data-phase]').forEach(b=>b.classList.toggle('active',b.dataset.phase===st.p));renderState(st.p,st.v);drawGraph()
   }
   function subthreshold(delta){
-    mode='phase';running=false;const v=REST+delta;manualV=v;manualT=1;$$('[data-phase]').forEach(b=>b.classList.remove('active'));renderState('rest',v);$('#graphSubtitle').textContent='aktuelle Reizantwort: unterschwellig · kein Aktionspotenzial';drawGraph();$('#stimulusResult').className='stimulus-result fail';$('#stimulusResult strong').textContent=`lokale Depolarisation bis ${v} mV`;$('#stimulusResult span').textContent='Schwelle −55 mV nicht erreicht → kein Aktionspotenzial';toast('Unterschwelliger Reiz')
+    mode='phase';running=false;const v=REST+delta;manualV=v;manualT=1;$$('[data-phase]').forEach(b=>b.classList.remove('active'));renderState('rest',v);$('#phaseName').textContent='lokale Depolarisation';$('#explainTitle').textContent='Unterschwellige Depolarisation';$('#explainText').textContent='Der Reiz macht das Membranpotenzial vorübergehend weniger negativ, erreicht aber den Schwellenwert nicht. Die spannungsabhängigen Na⁺-Kanäle starten deshalb keine positive Rückkopplung; es entsteht kein Aktionspotenzial.';$('#causeText').textContent='Depolarisation bleibt unter dem Schwellenwert';$('#graphSubtitle').textContent='aktuelle Reizantwort: unterschwellig · kein Aktionspotenzial';$('#secondStimHint').textContent='Kein Aktionspotenzial aktiv – Refraktärzeit entsteht nicht.';drawGraph();$('#stimulusResult').className='stimulus-result fail';$('#stimulusResult strong').textContent=`lokale Depolarisation bis ${v} mV`;$('#stimulusResult span').textContent='Schwelle −55 mV nicht erreicht → kein Aktionspotenzial';toast('Unterschwelliger Reiz')
   }
   function stimulate(isSecond=false){
     const delta=+$('#stimulus').value;
@@ -94,9 +96,7 @@
   $('#playBtn').onclick=()=>{if(mode!=='run'){startAP();return}running=!running;$('#playBtn').textContent=running?'⏸ Pause':'▶ Weiter'};
   $('#stepBtn').onclick=()=>{
     if(mode==='run'){
-      running=false;t=Math.min(7,t+.55);
-      if(t>=7){setPhase('rest');$('#secondStimHint').textContent='Aktionspotenzial beendet. Die Membran ist wieder erregbar.';return}
-      const st=stateAt(t);renderState(st.p,st.v);$$('[data-phase]').forEach(b=>b.classList.toggle('active',b.dataset.phase===st.p));drawGraph();$('#playBtn').textContent='▶ Weiter'
+      const p=stateAt(t).p;const i=phaseOrder.indexOf(p);const next=phaseOrder[(i+1)%phaseOrder.length];setPhase(next);toast('Phasenansicht')
     }else{const i=phaseOrder.indexOf(currentPhase());setPhase(phaseOrder[(i+1)%phaseOrder.length])}
   };
   $('#resetBtn').onclick=()=>{t=0;setPhase('rest');$('#stimulusResult').className='stimulus-result';$('#stimulusResult strong').textContent='Reiz wählen und auslösen';$('#stimulusResult span').textContent='Ruhe −70 mV · Schwelle −55 mV';$('#secondStimHint').textContent='Starte zuerst ein Aktionspotenzial.'};
