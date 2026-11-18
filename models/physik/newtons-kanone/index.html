@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07101c">
+<title>Newtons Kanone · NaWi-Modelllabor</title>
+<link rel="stylesheet" href="../../../assets/model-base.css">
+<link rel="stylesheet" href="model.css">
+</head>
+<body>
+<main class="model-shell" id="appShell">
+  <header class="model-head">
+    <div>
+      <a class="back" href="../../../">← NaWi-Modelllabor</a>
+      <div class="eyebrow">Physik · Gravitation &amp; Raumfahrt</div>
+      <h1>Newtons Kanone</h1>
+      <p class="model-note intro">Newtons Gedankenexperiment: Eine Kanone auf einem extrem hohen Berg schießt <strong>waagerecht</strong>. Wie schnell muss die Kugel sein, damit sie nie mehr auf der Erde ankommt?</p>
+    </div>
+    <div class="head-actions">
+      <button id="fireBtn" class="primary">💥 Abfeuern</button>
+      <button id="pauseBtn">⏸ Pause</button>
+      <button id="presentBtn">▣ Präsentation</button>
+    </div>
+  </header>
+
+  <section class="preset-bar" aria-label="Schnellwahl Abschussgeschwindigkeit">
+    <span class="phase-label">Schnellwahl</span>
+    <button data-v="2">2 km/s</button>
+    <button data-v="5">5 km/s</button>
+    <button data-v="7">7 km/s</button>
+    <button data-v="circ">Kreisbahn</button>
+    <button data-v="9.5">9,5 km/s</button>
+    <button data-v="10.4">10,4 km/s</button>
+    <button data-v="esc">Flucht</button>
+  </section>
+
+  <div class="main-grid">
+    <section class="model-card scene-card">
+      <div class="scene-head" aria-live="polite">
+        <div class="readout"><small>Geschwindigkeit</small><strong><span id="roV">0,00</span> km/s</strong></div>
+        <div class="readout"><small>Höhe über Grund</small><strong><span id="roH">0</span> km</strong></div>
+        <div class="readout"><small>Strecke über Grund</small><strong><span id="roD">0</span> km</strong></div>
+        <div class="readout"><small>Flugzeit</small><strong id="roT">0:00 min</strong></div>
+        <div class="state-pill" id="statePill">bereit</div>
+      </div>
+      <div class="scene-wrap" id="sceneWrap">
+        <canvas id="scene" aria-label="Erde mit Berg, Kanone und Flugbahnen der Kanonenkugeln"></canvas>
+      </div>
+      <div class="scene-foot">
+        <span><i class="key v"></i>Geschwindigkeit <b>v</b></span>
+        <span><i class="key f"></i>Gewichtskraft <b>F<sub>G</sub></b> (zum Erdmittelpunkt)</span>
+        <span><i class="key k"></i>100 km: Grenze zum Weltraum</span>
+        <span class="muted">Berg &amp; Kanone nicht maßstäblich</span>
+      </div>
+    </section>
+
+    <aside class="side-column">
+      <section class="model-card controls-card">
+        <h2>Abschuss einstellen</h2>
+        <label class="control">
+          <span>Abschussgeschwindigkeit <output id="vOut">7,00 km/s</output></span>
+          <input id="vRange" type="range" min="0.5" max="12.5" step="0.01" value="7">
+          <div class="ticks" id="vTicks" hidden><span id="tickV1">v₁</span><span id="tickV2">v₂</span></div>
+        </label>
+        <label class="control">
+          <span>Höhe des Bergs <output id="hOut">200 km</output></span>
+          <input id="hRange" type="range" min="0" max="2000" step="10" value="200">
+          <small>Zum Vergleich: Mount Everest 8,8 km · ISS ca. 400 km</small>
+        </label>
+        <label class="control">
+          <span>Zeitraffer <output id="wOut">1 s ≙ 10 min</output></span>
+          <input id="wRange" type="range" min="0" max="5" step="1" value="2">
+        </label>
+        <div class="toggles">
+          <label><input type="checkbox" id="vecToggle" checked> Pfeile für v und F<sub>G</sub></label>
+          <label><input type="checkbox" id="keepToggle" checked> alte Bahnen behalten</label>
+        </div>
+        <button id="clearBtn">↺ Bahnen löschen</button>
+      </section>
+
+      <section class="model-card explanation-card">
+        <h2 id="explainTitle">Bereit zum Abfeuern</h2>
+        <p id="explainText">Stelle eine Geschwindigkeit ein und feuere ab. Beginne langsam und steigere die Geschwindigkeit schrittweise. Was verändert sich an der Flugbahn?</p>
+        <div class="cause-box"><small>Kernidee</small><strong>Die Kugel fällt immer zur Erde – die Frage ist nur, ob sich die Erdoberfläche schneller unter ihr „wegkrümmt“, als sie fällt.</strong></div>
+      </section>
+
+      <details class="model-card key-card" id="keyCard">
+        <summary>Kenngrößen in dieser Höhe <span>(Lösung)</span></summary>
+        <div class="key-grid">
+          <div><small>Kreisbahngeschw. v₁</small><strong id="kV1">–</strong></div>
+          <div><small>Fluchtgeschw. v₂</small><strong id="kV2">–</strong></div>
+          <div><small>Umlaufzeit Kreisbahn</small><strong id="kT">–</strong></div>
+          <div><small>Fallbeschleunigung g</small><strong id="kG">–</strong></div>
+        </div>
+        <p class="formula">v₁ = √(G·M/r) · v₂ = √2 · v₁ · r = Erdradius + Höhe</p>
+      </details>
+    </aside>
+  </div>
+
+  <section class="model-card task-card classroom-hide">
+    <h2>Forschungsaufträge</h2>
+    <ol>
+      <li><strong>Weiter und weiter:</strong> Feuere nacheinander mit 2, 4 und 6 km/s. Beschreibe, wie sich Flugweite und Form der Bahn ändern.</li>
+      <li><strong>Nie mehr landen:</strong> Finde durch Probieren die kleinste Geschwindigkeit, bei der die Kugel die Erde einmal umrundet. Vergleiche danach mit der „Lösung“.</li>
+      <li><strong>Höher hinaus:</strong> Stelle den Berg auf 400 km (Höhe der ISS). Ist die Kreisbahngeschwindigkeit dort größer oder kleiner? Erkläre mit der Gewichtskraft.</li>
+      <li><strong>Pfeile deuten:</strong> Beobachte bei einer Kreisbahn die beiden Pfeile. Welchen Winkel bilden v und F<sub>G</sub>? Warum wird die Kugel dann weder schneller noch langsamer?</li>
+      <li><strong>Zu schnell:</strong> Schieße mit 9,5 km/s. Wo ist die Kugel am schnellsten, wo am langsamsten? Begründe.</li>
+    </ol>
+  </section>
+
+  <details class="model-card classroom-hide assumptions">
+    <summary>Modellannahmen &amp; Grenzen</summary>
+    <div class="model-note">
+      <p><strong>Das Modell zeigt:</strong> Bahnen eines waagerecht abgeschossenen Körpers unter der Gravitation der Erde – vom Einschlag über die Kreis- und Ellipsenbahn bis zur Fluchtbahn. Gerechnet wird mit dem Gravitationsgesetz F = G·m·M/r²; die Bahn wird Schritt für Schritt numerisch berechnet.</p>
+      <p><strong>Keine Atmosphäre:</strong> Luftwiderstand fehlt vollständig. Eine echte Kanonenkugel mit mehreren km/s würde in der Luft stark abgebremst und verglühen. Deshalb steht die Kanone auf einem Berg, der weit über die Atmosphäre hinausragt – das ist ein Gedankenexperiment, kein realer Ort.</p>
+      <p><strong>Erde:</strong> perfekte, homogene Kugel ohne Rotation. Mond, Sonne und Abplattung der Erde werden nicht berücksichtigt. Die Kugel wird als Massepunkt behandelt.</p>
+      <p><strong>Darstellung:</strong> Erde, Bahnen und Höhen sind maßstäblich. Berg, Kanone, Kugel und Pfeillängen sind zur Sichtbarkeit vergrößert bzw. schematisch. Die Pfeile zeigen Richtung und relative Größe, keine Absolutwerte.</p>
+      <p><strong>Nach einem Umlauf:</strong> Bei einer exakten Kreisbahn würde die Kugel die Kanone von hinten treffen. Im Modell fliegt sie hindurch.</p>
+      <p><strong>Reale Raumfahrt:</strong> Raketen erreichen die Umlaufbahn nicht mit einem einzigen „Schuss“, sondern beschleunigen über Minuten und steigen dabei auf. Das Prinzip der Umlaufbahn ist aber dasselbe.</p>
+    </div>
+  </details>
+</main>
+<div id="toast" class="toast"></div>
+<script src="model.js"></script>
+</body>
+</html>
