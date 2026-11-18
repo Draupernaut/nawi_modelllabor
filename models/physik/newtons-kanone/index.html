@@ -20,6 +20,8 @@
     <div class="head-actions">
       <button id="fireBtn" class="primary">💥 Abfeuern</button>
       <button id="pauseBtn">⏸ Pause</button>
+      <button id="stepBtn">⏭ +1 min</button>
+      <button id="cameraBtn">🎥 Kamera: automatisch</button>
       <button id="presentBtn">▣ Präsentation</button>
     </div>
   </header>
@@ -51,6 +53,8 @@
         <span><i class="key v"></i>Geschwindigkeit <b>v</b></span>
         <span><i class="key f"></i>Gewichtskraft <b>F<sub>G</sub></b> (zum Erdmittelpunkt)</span>
         <span><i class="key k"></i>100 km: Grenze zum Weltraum</span>
+        <span><i class="key inert"></i>Bewegung ohne Gravitation</span>
+        <span><i class="key fall"></i>Ablenkung durch Gravitation</span>
         <span class="muted">Berg &amp; Kanone nicht maßstäblich</span>
       </div>
     </section>
@@ -74,15 +78,17 @@
         </label>
         <div class="toggles">
           <label><input type="checkbox" id="vecToggle" checked> Pfeile für v und F<sub>G</sub></label>
+          <label><input type="checkbox" id="decompToggle" checked> „Geradeaus + Fallen“ zeigen</label>
           <label><input type="checkbox" id="keepToggle" checked> alte Bahnen behalten</label>
         </div>
+        <div class="step-hint"><b>Schrittmodus:</b> Pause drücken und mit <b>+1 min</b> die Bewegung minutenweise untersuchen. Mit <b>Kamera</b> zwischen automatischem Folgen und einer festen Gesamtansicht der Erde wechseln.</div>
         <button id="clearBtn">↺ Bahnen löschen</button>
       </section>
 
       <section class="model-card explanation-card">
         <h2 id="explainTitle">Bereit zum Abfeuern</h2>
         <p id="explainText">Stelle eine Geschwindigkeit ein und feuere ab. Beginne langsam und steigere die Geschwindigkeit schrittweise. Was verändert sich an der Flugbahn?</p>
-        <div class="cause-box"><small>Kernidee</small><strong>Die Kugel fällt immer zur Erde – die Frage ist nur, ob sich die Erdoberfläche schneller unter ihr „wegkrümmt“, als sie fällt.</strong></div>
+        <div class="cause-box"><small>Kernidee</small><strong>Die Kugel fällt ständig zur Erde. Bei der richtigen Geschwindigkeit krümmt sich die Erdoberfläche genau so unter ihr weg, dass sie den Boden nie erreicht.</strong></div>
       </section>
 
       <details class="model-card key-card" id="keyCard">
