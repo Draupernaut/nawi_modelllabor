@@ -10,11 +10,42 @@
   <title>NaWi-Modelllabor</title>
 </head>
 <body>
-  <header class="hero"><div class="hero-inner"><div class="brand-row"><div class="mark" aria-hidden="true">⌬</div><div><p class="eyebrow">Offenes Unterrichtsprojekt</p><h1>NaWi-Modelllabor</h1></div></div><p class="lede">Interaktive Modelle für Chemie, Biologie und Physik – direkt im Browser, ohne Schülerkonto und mit transparenten Modellgrenzen.</p><div class="hero-actions"><a class="button primary" href="#modelle">Modelle entdecken</a><a class="button" href="beitragen.html">Modell beitragen</a></div></div></header>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand-row"><div class="mark" aria-hidden="true">⌬</div><div><p class="eyebrow">Offenes Unterrichtsprojekt</p><h1>NaWi-Modelllabor</h1></div></div>
+      <p class="lede">Interaktive Modelle für Chemie, Biologie und Physik – direkt im Browser, ohne Schülerkonto und mit transparenten Modellgrenzen.</p>
+      <div class="hero-actions"><a class="button primary" href="#modelle">Modelle entdecken</a><a class="button" href="beitragen.html">Modell beitragen</a></div>
+      <div class="hero-stats" aria-label="Aktueller Stand"><span><strong id="readyCount">–</strong> einsatzbereit</span><span><strong id="totalCount">–</strong> Modelle im Katalog</span><span>3 Fachbereiche</span></div>
+    </div>
+  </header>
   <main>
-    <section class="intro-grid" aria-label="Projektprinzipien"><article class="info-card"><span class="icon">⚗️</span><h2>Unterrichtsnah</h2><p>Modelle für Demonstration, Experimentieren und Auswertung – nicht bloß dekorative Animationen.</p></article><article class="info-card"><span class="icon">🔬</span><h2>Modellbewusst</h2><p>Jedes Modell benennt Annahmen, Grenzen und den fachlichen Zweck seiner Vereinfachungen.</p></article><article class="info-card"><span class="icon">🤝</span><h2>Offen, aber geprüft</h2><p>Andere Lehrkräfte können beitragen. Veröffentlicht wird erst nach Review über Pull Requests.</p></article></section>
-    <section id="modelle" class="catalog-section"><div class="section-head"><div><p class="eyebrow">Modellbibliothek</p><h2>Welches Phänomen möchtest du untersuchen?</h2></div><p class="count" id="resultCount" aria-live="polite"></p></div><div class="filters" role="search"><label class="search-field"><span class="sr-only">Modelle durchsuchen</span><input id="searchInput" type="search" placeholder="z. B. Gleichgewicht, Osmose, Enzym …" autocomplete="off"></label><div class="chips" aria-label="Fach filtern"><button class="chip active" data-subject="all">Alle</button><button class="chip" data-subject="chemie">⚗️ Chemie</button><button class="chip" data-subject="biologie">🧬 Biologie</button><button class="chip" data-subject="physik">🪐 Physik</button></div><label class="select-field">Klassenstufe<select id="gradeFilter"><option value="all">Alle</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label></div><div id="catalog" class="catalog" aria-live="polite"></div><div id="emptyState" class="empty" hidden>Keine Modelle passen zu diesem Filter.</div></section>
-    <section class="roadmap"><div><p class="eyebrow">Als Nächstes</p><h2>Geplante Modellfamilien</h2></div><div class="roadmap-grid"><div><b>Chemie</b><span>Reaktionsgeschwindigkeit · Kollisionen · Säure–Base · Elektrochemie</span></div><div><b>Biologie</b><span>Enzyme · Osmose/Diffusion · Räuber–Beute · Evolution/Selektion</span></div><div><b>Physik</b><span>Newtons Kanone · Gravitation · Raumfahrt</span></div></div></section>
+    <section class="intro-grid" aria-label="Projektprinzipien">
+      <article class="info-card"><span class="icon">⚗️</span><h2>Unterrichtsnah</h2><p>Modelle für Demonstration, Experimentieren und Auswertung – nicht bloß dekorative Animationen.</p></article>
+      <article class="info-card"><span class="icon">🔬</span><h2>Modellbewusst</h2><p>Jedes Modell benennt Annahmen, Grenzen und den fachlichen Zweck seiner Vereinfachungen.</p></article>
+      <article class="info-card"><span class="icon">🤝</span><h2>Offen, aber geprüft</h2><p>Andere Lehrkräfte können beitragen. Veröffentlicht wird erst nach Review über Pull Requests.</p></article>
+    </section>
+
+    <section id="modelle" class="catalog-section">
+      <div class="section-head"><div><p class="eyebrow">Modellbibliothek</p><h2>Welches Phänomen möchtest du untersuchen?</h2></div><p class="count" id="resultCount" aria-live="polite"></p></div>
+      <div class="filters" role="search">
+        <label class="search-field"><span class="sr-only">Modelle durchsuchen</span><input id="searchInput" type="search" placeholder="z. B. Gleichgewicht, Osmose, Enzym …" autocomplete="off"></label>
+        <div class="chips" aria-label="Fach filtern">
+          <button class="chip active" data-subject="all" aria-pressed="true">Alle</button>
+          <button class="chip" data-subject="chemie" aria-pressed="false">⚗️ Chemie</button>
+          <button class="chip" data-subject="biologie" aria-pressed="false">🧬 Biologie</button>
+          <button class="chip" data-subject="physik" aria-pressed="false">🪐 Physik</button>
+        </div>
+        <label class="select-field">Klassenstufe<select id="gradeFilter"><option value="all">Alle</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label>
+      </div>
+      <div class="filter-tools">
+        <label class="ready-toggle"><input id="readyOnly" type="checkbox"> Nur einsatzbereite Modelle</label>
+        <button id="resetFilters" class="text-button" type="button">Filter zurücksetzen</button>
+      </div>
+      <div id="catalog" class="catalog" aria-live="polite"></div>
+      <div id="emptyState" class="empty" hidden><b>Keine Treffer.</b><span>Ändere die Suche oder setze die Filter zurück.</span></div>
+    </section>
+
+    <section class="roadmap"><div><p class="eyebrow">Nächste Ausbaustufe</p><h2>Gezielt ergänzen statt PhET nachbauen</h2></div><div class="roadmap-grid"><div><b>Chemie</b><span>Säure–Base · Elektrochemie · Gleichgewichtsmodell später integrieren</span></div><div><b>Biologie</b><span>Enzyme · Osmose/Diffusion · Räuber–Beute · Evolution/Selektion</span></div><div><b>Physik</b><span>Neue Modelle nur dort, wo im konkreten Unterricht eine Lücke besteht</span></div></div></section>
   </main>
   <footer><div><b>NaWi-Modelllabor</b><span>Offene Modellbibliothek für den naturwissenschaftlichen Unterricht</span></div><div class="footer-links"><a href="beitragen.html">Beitragen</a><a href="lizenzen.html">Lizenzen</a><a href="sicherheit.html">Sicherheit</a></div></footer>
   <script src="assets/site.js" defer></script>
