@@ -1,20 +1,34 @@
 # NaWi-Modelllabor
 
-Offene Sammlung interaktiver Modelle für den Chemie- und Biologieunterricht.
+Offene Sammlung interaktiver Modelle für den **Chemie-, Biologie- und Physikunterricht**.
 
 ## Leitidee
 
+Das NaWi-Modelllabor soll PhET nicht ersetzen. Es ergänzt vorhandene Angebote dort, wo für eine konkrete Unterrichtssituation ein kleineres, gezielter steuerbares oder didaktisch anders aufgebautes Modell sinnvoll ist.
+
 - **Unterricht zuerst:** Demonstrieren, experimentieren, auswerten.
+- **Ein Modell – eine zentrale Idee:** lieber fokussiert als mit Funktionen überladen.
 - **Modellbewusstsein:** Annahmen und Grenzen sind Teil jedes Modells.
-- **Keine Schülerkonten:** Die Modelle sollen ohne Anmeldung nutzbar sein.
+- **Keine Schülerkonten:** Modelle sind ohne Anmeldung nutzbar.
 - **Simple Surface, Deep Model:** verständliche Oberfläche, fachlich nachvollziehbare Modelllogik.
 - **Offen, aber kontrolliert:** Beiträge sind willkommen; Veröffentlichung erfolgt über Review.
 
+## Aktueller Bestand
+
+Einsatzbereit sind derzeit:
+
+- Dynamisches chemisches Gleichgewicht
+- Reaktionsgeschwindigkeit & Kollisionen
+- Aktionspotenzial am Neuron
+- Newtons Kanone
+
+Weitere Modelle werden bewusst nur dann ergänzt, wenn sie im Unterricht einen erkennbaren Mehrwert gegenüber bereits guten vorhandenen Simulationen bieten.
+
 ## Architektur
 
-Die Startseite lädt nur den kleinen Modellkatalog. Einzelne Modelle werden erst geöffnet, wenn sie ausgewählt werden. Dadurch wächst die Bibliothek, ohne dass 50 oder 100 Simulationen gleichzeitig geladen werden.
+Die Startseite lädt nur den kleinen Modellkatalog. Einzelne Modelle werden erst geöffnet, wenn sie ausgewählt werden. Dadurch wächst die Bibliothek, ohne dass alle Simulationen gleichzeitig geladen werden.
 
-```text
+~~~text
 nawi_modelllabor/
 ├─ index.html
 ├─ catalog.json
@@ -22,29 +36,28 @@ nawi_modelllabor/
 ├─ models/
 │  ├─ chemie/<slug>/       # eigenständige Modelle
 │  ├─ biologie/<slug>/
+│  ├─ physik/<slug>/
 │  └─ _template/           # Vorlage für Beiträge
 ├─ scripts/validate.mjs    # Katalog- und Sicherheits-Checks
 ├─ .github/                # PR- und Issue-Workflow
 └─ docs/                   # Maintainer-Dokumentation
-```
+~~~
 
-## Aktueller Startbestand
-
-Das bereits existierende Modell **Dynamisches chemisches Gleichgewicht** ist als erstes Modul im Katalog verlinkt. Es kann später vollständig in dieses Repository migriert werden, ohne den bestehenden öffentlichen Link sofort abzuschalten.
+Filterzustände der Startseite werden in der URL gespeichert. Dadurch können Lehrkräfte direkt eine gefilterte Ansicht teilen, etwa nur Chemie oder nur einsatzbereite Modelle einer Klassenstufe.
 
 ## Lokal testen
 
-```bash
+~~~bash
 python3 -m http.server 8000
-```
+~~~
 
 Danach `http://localhost:8000` öffnen.
 
 Validierung:
 
-```bash
+~~~bash
 npm run validate
-```
+~~~
 
 ## Beiträge
 
