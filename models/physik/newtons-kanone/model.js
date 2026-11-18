@@ -19,6 +19,7 @@
     roV: $('#roV'), roH: $('#roH'), roD: $('#roD'), roT: $('#roT'), pill: $('#statePill'),
     exTitle: $('#explainTitle'), exText: $('#explainText'),
     kV1: $('#kV1'), kV2: $('#kV2'), kT: $('#kT'), kG: $('#kG'), keyCard: $('#keyCard'),
+    diagType: $('#diagType'), diagV1: $('#diagV1'), diagV2: $('#diagV2'), diagEnergy: $('#diagEnergy'), diagPeri: $('#diagPeri'), diagApo: $('#diagApo'), diagNote: $('#diagNote'),
     ticks: $('#vTicks'), tickV1: $('#tickV1'), tickV2: $('#tickV2'), toast: $('#toast')
   };
 
@@ -59,6 +60,50 @@
     const r2 = x * x + y * y, r = Math.sqrt(r2), k = -GM / (r2 * r);
     return [k * x, k * y];
   }
+  function orbitDiagnostics(v0, h0) {
+    const r0 = R + h0;
+    const energy = v0 * v0 / 2 - GM / r0;
+    const hSpec = r0 * v0;
+    const e = Math.sqrt(Math.max(0, 1 + 2 * energy * hSpec * hSpec / (GM * GM)));
+    const rp = hSpec * hSpec / (GM * (1 + e));
+    let ra = Infinity;
+    if (energy < 0) {
+      const a = -GM / (2 * energy);
+      ra = a * (1 + e);
+    }
+    return { energy, e, rp, ra };
+  }
+
+  function updateDiagnostics(v0 = null, h0 = st.h) {
+    if (v0 === null) {
+      ui.diagType.textContent = 'bereit';
+      ui.diagV1.textContent = ui.diagV2.textContent = ui.diagEnergy.textContent = ui.diagPeri.textContent = ui.diagApo.textContent = '–';
+      ui.diagNote.textContent = 'Nach dem Abschuss wird hier sichtbar, warum die Bahn die Erde trifft, gebunden bleibt oder entkommt.';
+      return;
+    }
+    const v1 = vCirc(h0), v2 = vEsc(h0), d = orbitDiagnostics(v0, h0);
+    const periAlt = (d.rp - R) / 1000;
+    const apoAlt = Number.isFinite(d.ra) ? (d.ra - R) / 1000 : Infinity;
+    ui.diagV1.textContent = nf(v0 / v1 * 100, 1) + ' %';
+    ui.diagV2.textContent = nf(v0 / v2 * 100, 1) + ' %';
+    ui.diagEnergy.textContent = nf(d.energy / 1e6, 2) + ' MJ/kg';
+    ui.diagPeri.textContent = periAlt < 0 ? nf(periAlt, 0) + ' km' : nf(periAlt, 0) + ' km';
+    ui.diagApo.textContent = Number.isFinite(apoAlt) ? nf(apoAlt, 0) + ' km' : '∞';
+    if (d.energy >= 0) {
+      ui.diagType.textContent = 'ungebundene Bahn';
+      ui.diagNote.textContent = 'ε ≥ 0: Die Gesamtenergie reicht für eine Fluchtbahn. Die Geschwindigkeit nimmt weiter ab, aber die Kugel bleibt nicht gravitativ gebunden.';
+    } else if (d.rp <= R) {
+      ui.diagType.textContent = 'Erdschnitt';
+      ui.diagNote.textContent = 'Die rechnerische Ellipse würde durch die Erde führen: Das Perigäum liegt unter der Erdoberfläche. Deshalb endet die reale Bahn im Modell mit einem Einschlag.';
+    } else if (Math.abs(v0 - v1) / v1 < 0.01) {
+      ui.diagType.textContent = 'nahe Kreisbahn';
+      ui.diagNote.textContent = 'v liegt praktisch bei v₁. Perigäum und Apogäum sind fast gleich hoch: Die Bahn ist nahezu kreisförmig.';
+    } else {
+      ui.diagType.textContent = 'gebundene Ellipse';
+      ui.diagNote.textContent = 'ε < 0 und das Perigäum bleibt über der Erdoberfläche: Die Kugel bleibt auf einer geschlossenen Ellipsenbahn.';
+    }
+  }
+
   function simulate(v0, h0) {
     const r0 = R + h0;
     const energy = v0 * v0 / 2 - GM / r0;
@@ -133,6 +178,7 @@
     setPill('flying', 'im Flug');
     ui.exTitle.textContent = 'Die Kugel fliegt …';
     ui.exText.textContent = `Abschuss mit ${nf(st.v / 1000, 2)} km/s aus ${nf(st.h / 1000)} km Höhe. Beobachte, wie sich Richtung und Betrag der Geschwindigkeit ändern.`;
+    updateDiagnostics(st.v, st.h);
   }
 
   function onShotEnd(s) {
@@ -242,11 +288,12 @@
     setPill('', 'bereit');
     ui.exTitle.textContent = 'Bereit zum Abfeuern';
     ui.exText.textContent = 'Stelle eine Geschwindigkeit ein und feuere ab. Beginne langsam und steigere die Geschwindigkeit schrittweise. Was verändert sich an der Flugbahn?';
+    updateDiagnostics();
   });
   document.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
     let v = b.dataset.v;
     if (v === 'circ') v = Math.round(vCirc(st.h) / 10) / 100;
-    else if (v === 'esc') v = Math.ceil(vEsc(st.h) / 10) / 100 + 0.15;
+    else if (v === 'esc') v = Math.ceil(vEsc(st.h) / 10) / 100;
     else v = Number(v);
     ui.vRange.value = String(v); syncV();
     clearPresets(); b.classList.add('active');
@@ -448,9 +495,9 @@
     ctx.beginPath(); ctx.moveTo(xi, yi); ctx.lineTo(xa, ya); ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = '#bff3d6'; ctx.font = '750 10px Inter,system-ui,sans-serif'; ctx.textAlign = 'left';
-    ctx.fillText('ohne Gravitation', xi + 6, yi - 7);
+    ctx.fillText('nach 2 min ohne Gravitation', xi + 6, yi - 7);
     ctx.fillStyle = '#ffd9ad';
-    ctx.fillText('Ablenkung durch Gravitation', xa + 6, ya + 12);
+    ctx.fillText('tatsächliche Lage nach 2 min', xa + 6, ya + 12);
     ctx.fillStyle = 'rgba(255,255,255,.75)';
     ctx.beginPath(); ctx.arc(xa, ya, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
@@ -542,6 +589,6 @@
     requestAnimationFrame(frame);
   }
 
-  syncV(); syncH(); syncW(); syncCameraButton(); resize();
+  syncV(); syncH(); syncW(); syncCameraButton(); updateDiagnostics(); resize();
   requestAnimationFrame(frame);
 })();
