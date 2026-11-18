@@ -14,8 +14,8 @@
   const wrap = $('#sceneWrap');
   const ui = {
     vRange: $('#vRange'), vOut: $('#vOut'), hRange: $('#hRange'), hOut: $('#hOut'),
-    wRange: $('#wRange'), wOut: $('#wOut'), vec: $('#vecToggle'), keep: $('#keepToggle'),
-    fire: $('#fireBtn'), pause: $('#pauseBtn'), clear: $('#clearBtn'), present: $('#presentBtn'),
+    wRange: $('#wRange'), wOut: $('#wOut'), vec: $('#vecToggle'), decomp: $('#decompToggle'), keep: $('#keepToggle'),
+    fire: $('#fireBtn'), pause: $('#pauseBtn'), step: $('#stepBtn'), camera: $('#cameraBtn'), clear: $('#clearBtn'), present: $('#presentBtn'),
     roV: $('#roV'), roH: $('#roH'), roD: $('#roD'), roT: $('#roT'), pill: $('#statePill'),
     exTitle: $('#explainTitle'), exText: $('#explainText'),
     kV1: $('#kV1'), kV2: $('#kV2'), kT: $('#kT'), kG: $('#kG'), keyCard: $('#keyCard'),
@@ -46,6 +46,7 @@
   /* ---------- Zustand ---------- */
   const st = {
     v: 7000, h: 200e3, warp: 600, paused: false,
+    cameraMode: 'auto',
     shots: [], cur: null, colorIdx: 0, flash: 0
   };
   const view = { cx: 0, cy: 0, scale: 1e-4, init: false };
@@ -172,6 +173,27 @@
     ui.pill.className = 'state-pill ' + cls; ui.pill.textContent = text;
   }
 
+  function advanceStep(seconds = 60) {
+    if (!st.cur) fire();
+    const s = st.cur;
+    if (!s) return;
+    st.paused = true;
+    ui.pause.textContent = '▶ Weiter';
+    const periodic = s.kind === 'orbit' || s.kind === 'circle';
+    s.t += seconds;
+    if (!periodic && s.t >= s.tEnd) s.t = s.tEnd;
+    if (!s.ended && s.t >= s.tEnd) onShotEnd(s);
+    setPill(s.ended ? (s.kind === 'impact' ? 'impact' : s.kind === 'escape' ? 'escape' : 'orbit') : 'flying',
+      s.ended ? (s.kind === 'impact' ? 'Einschlag' : s.kind === 'escape' ? 'Fluchtbahn' : s.kind === 'circle' ? 'Kreisbahn' : 'Umlaufbahn') : 'Schrittmodus');
+    toast('+1 min Simulationszeit');
+  }
+
+  function syncCameraButton() {
+    const fixed = st.cameraMode === 'earth';
+    ui.camera.classList.toggle('camera-fixed', fixed);
+    ui.camera.textContent = fixed ? '🌍 Ansicht: Erde komplett' : '🎥 Kamera: automatisch';
+  }
+
   /* ---------- Bedienung ---------- */
   function syncV() {
     st.v = Number(ui.vRange.value) * 1000;
@@ -208,6 +230,13 @@
     st.paused = !st.paused;
     ui.pause.textContent = st.paused ? '▶ Weiter' : '⏸ Pause';
   });
+  ui.step.addEventListener('click', () => advanceStep(60));
+  ui.camera.addEventListener('click', () => {
+    st.cameraMode = st.cameraMode === 'auto' ? 'earth' : 'auto';
+    syncCameraButton();
+    view.init = false;
+    toast(st.cameraMode === 'earth' ? 'Feste Gesamtansicht der Erde' : 'Automatische Kamera aktiviert');
+  });
   ui.clear.addEventListener('click', () => {
     st.shots = []; st.cur = null; st.colorIdx = 0;
     setPill('', 'bereit');
@@ -233,12 +262,20 @@
     if (e.key === 'Escape' && document.body.classList.contains('presentation')) ui.present.click();
     const tag = (document.activeElement && document.activeElement.tagName) || '';
     if (e.code === 'Space' && !/INPUT|BUTTON|SUMMARY|SELECT|TEXTAREA/.test(tag)) { e.preventDefault(); fire(); }
+    if (e.key === 'ArrowRight' && !/INPUT|BUTTON|SUMMARY|SELECT|TEXTAREA/.test(tag)) { e.preventDefault(); advanceStep(60); }
   });
 
   /* ---------- Ansicht (Kamera) ---------- */
   function targetView() {
     const r0 = R + st.h;
     let box;
+    if (st.cameraMode === 'earth') {
+      const rr = Math.max(R + st.h, R + KARMAN) * 1.12;
+      box = [-rr, rr, -rr, rr];
+      const w = (box[1] - box[0]) * 1.05, h = (box[3] - box[2]) * 1.05;
+      const pad = 34;
+      return { cx: 0, cy: 0, scale: Math.min((W - pad) / w, (H - pad) / h) };
+    }
     const all = st.cur ? [...st.shots, st.cur] : st.shots;
     if (!all.length) {
       box = [-1.12 * r0, 1.12 * r0, -1.12 * r0, 1.12 * r0];
@@ -392,6 +429,33 @@
     if (sub) { ctx.font = '800 9px Inter,system-ui,sans-serif'; ctx.fillText(sub, lx + 5, ly + 4); }
   }
 
+  function drawDecomposition(s, now) {
+    if (!ui.decomp.checked || s.ended) return;
+    const guideDt = 120;
+    const endT = (s.kind === 'orbit' || s.kind === 'circle') ? s.t + guideDt : Math.min(s.t + guideDt, s.tEnd);
+    if (endT <= s.t + 1) return;
+    const dt = endT - s.t;
+    const inertX = now.x + now.vx * dt;
+    const inertY = now.y + now.vy * dt;
+    const actual = stateAt(s, endT);
+    const x0 = sx(now.x), y0 = sy(now.y), xi = sx(inertX), yi = sy(inertY), xa = sx(actual.x), ya = sy(actual.y);
+    ctx.save();
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([7, 6]);
+    ctx.strokeStyle = 'rgba(117,225,168,.9)';
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(xi, yi); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,180,95,.95)';
+    ctx.beginPath(); ctx.moveTo(xi, yi); ctx.lineTo(xa, ya); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#bff3d6'; ctx.font = '750 10px Inter,system-ui,sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('ohne Gravitation', xi + 6, yi - 7);
+    ctx.fillStyle = '#ffd9ad';
+    ctx.fillText('Ablenkung durch Gravitation', xa + 6, ya + 12);
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    ctx.beginPath(); ctx.arc(xa, ya, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
   function drawScaleBar() {
     const targetPx = 110, m = targetPx / view.scale;
     const p = Math.pow(10, Math.floor(Math.log10(m)));
@@ -431,6 +495,7 @@
       ctx.stroke();
       if (s.ended) labelShot(s);
       const X = sx(now.x), Y = sy(now.y);
+      drawDecomposition(s, now);
       if (ui.vec.checked) {
         const v = Math.hypot(now.vx, now.vy), r = Math.hypot(now.x, now.y), g = GM / (r * r);
         const vl = v / 8000 * 72, gl = Math.max(5, g / 9.81 * 52);
@@ -477,6 +542,6 @@
     requestAnimationFrame(frame);
   }
 
-  syncV(); syncH(); syncW(); resize();
+  syncV(); syncH(); syncW(); syncCameraButton(); resize();
   requestAnimationFrame(frame);
 })();
