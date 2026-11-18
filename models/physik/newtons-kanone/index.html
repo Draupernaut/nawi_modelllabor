@@ -78,7 +78,7 @@
         </label>
         <div class="toggles">
           <label><input type="checkbox" id="vecToggle" checked> Pfeile für v und F<sub>G</sub></label>
-          <label><input type="checkbox" id="decompToggle" checked> „Geradeaus + Fallen“ zeigen</label>
+          <label><input type="checkbox" id="decompToggle" checked> 2-min-Vergleich „ohne / mit Gravitation“</label>
           <label><input type="checkbox" id="keepToggle" checked> alte Bahnen behalten</label>
         </div>
         <div class="step-hint"><b>Schrittmodus:</b> Pause drücken und mit <b>+1 min</b> die Bewegung minutenweise untersuchen. Mit <b>Kamera</b> zwischen automatischem Folgen und einer festen Gesamtansicht der Erde wechseln.</div>
@@ -89,6 +89,17 @@
         <h2 id="explainTitle">Bereit zum Abfeuern</h2>
         <p id="explainText">Stelle eine Geschwindigkeit ein und feuere ab. Beginne langsam und steigere die Geschwindigkeit schrittweise. Was verändert sich an der Flugbahn?</p>
         <div class="cause-box"><small>Kernidee</small><strong>Die Kugel fällt ständig zur Erde. Bei der richtigen Geschwindigkeit krümmt sich die Erdoberfläche genau so unter ihr weg, dass sie den Boden nie erreicht.</strong></div>
+        <div class="diagnostic" aria-live="polite">
+          <div class="diagnostic-head"><small>Bahndiagnose beim Abschuss</small><span id="diagType">bereit</span></div>
+          <div class="diagnostic-grid">
+            <div><small>v / Kreisbahn v₁</small><strong id="diagV1">–</strong></div>
+            <div><small>v / Flucht v₂</small><strong id="diagV2">–</strong></div>
+            <div><small>spez. Energie ε</small><strong id="diagEnergy">–</strong></div>
+            <div><small>rechnerisches Perigäum</small><strong id="diagPeri">–</strong></div>
+            <div><small>rechnerisches Apogäum</small><strong id="diagApo">–</strong></div>
+          </div>
+          <p id="diagNote">Nach dem Abschuss wird hier sichtbar, warum die Bahn die Erde trifft, gebunden bleibt oder entkommt.</p>
+        </div>
       </section>
 
       <details class="model-card key-card" id="keyCard">
@@ -121,7 +132,7 @@
       <p><strong>Das Modell zeigt:</strong> Bahnen eines waagerecht abgeschossenen Körpers unter der Gravitation der Erde – vom Einschlag über die Kreis- und Ellipsenbahn bis zur Fluchtbahn. Gerechnet wird mit dem Gravitationsgesetz F = G·m·M/r²; die Bahn wird Schritt für Schritt numerisch berechnet.</p>
       <p><strong>Keine Atmosphäre:</strong> Luftwiderstand fehlt vollständig. Eine echte Kanonenkugel mit mehreren km/s würde in der Luft stark abgebremst und verglühen. Deshalb steht die Kanone auf einem Berg, der weit über die Atmosphäre hinausragt – das ist ein Gedankenexperiment, kein realer Ort.</p>
       <p><strong>Erde:</strong> perfekte, homogene Kugel ohne Rotation. Mond, Sonne und Abplattung der Erde werden nicht berücksichtigt. Die Kugel wird als Massepunkt behandelt.</p>
-      <p><strong>Darstellung:</strong> Erde, Bahnen und Höhen sind maßstäblich. Berg, Kanone, Kugel und Pfeillängen sind zur Sichtbarkeit vergrößert bzw. schematisch. Die Pfeile zeigen Richtung und relative Größe, keine Absolutwerte.</p>
+      <p><strong>Darstellung:</strong> Erde, Bahnen und Höhen sind maßstäblich. Berg, Kanone, Kugel und Pfeillängen sind zur Sichtbarkeit vergrößert bzw. schematisch. Die Pfeile zeigen Richtung und relative Größe, keine Absolutwerte. Der gestrichelte „ohne / mit Gravitation“-Vergleich betrachtet jeweils die nächsten zwei Simulationsminuten und ist eine didaktische Gegenüberstellung, keine exakte Zerlegung der gekrümmten Bahn in zwei unabhängige Bewegungen.</p>
       <p><strong>Nach einem Umlauf:</strong> Bei einer exakten Kreisbahn würde die Kugel die Kanone von hinten treffen. Im Modell fliegt sie hindurch.</p>
       <p><strong>Reale Raumfahrt:</strong> Raketen erreichen die Umlaufbahn nicht mit einem einzigen „Schuss“, sondern beschleunigen über Minuten und steigen dabei auf. Das Prinzip der Umlaufbahn ist aber dasselbe.</p>
     </div>
