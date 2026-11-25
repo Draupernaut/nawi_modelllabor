@@ -61,14 +61,14 @@ function controls(){
   $('threshold').textContent=p.gravity?'Startmasse: 100 kg. Anfangsgewicht: '+fmt(100*G0)+' N. Modellschub: '+fmt(p.u*p.flow)+' N. Abheben beginnt, wenn der Schub die Gewichtskraft übersteigt.':'Ohne Gravitation reicht jeder positive Schub zum Abheben.';
 }
 function drawFlight(){
-  const scale=Math.ceil(Math.max(100,...sims.map(s=>s.peak*1.22))/100)*100;
-  const bottom=345,top=65,range=bottom-top;
+  const scale=Math.ceil(Math.max(100,...sims.map(s=>s.peak*1.35))/100)*100;
+  const bottom=345,top=125,range=bottom-top;
   let b='<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#081322"/><stop offset="1" stop-color="#244d6b"/></linearGradient></defs><rect width="800" height="345" fill="url(#sky)"/>'+rect(0,345,800,85,'#142438');
   for(let k=0;k<=4;k++){const y=bottom-k*range/4;b+=line(78,y,770,y,'#38526a',1,'3 7')+label(68,y+4,fmt(scale*k/4)+' m',13,'#9eb0c7','end');}
   b+=line(78,bottom,770,bottom,'#a5b6c8',2);
   sims.forEach((s,i)=>{
     const x=sims.length===2?252+i*310:420,tall=s.p.stages===2&&s.i===0,f=forces(s),c=i?'#f5db79':'#76d9ff';
-    const rocketBottom=tall?57:40,y=bottom-rocketBottom-Math.min(range-75,s.h/scale*(range-75));
+    const rocketBottom=tall?57:40,y=bottom-rocketBottom-Math.min(range,s.h/scale*range);
     if(sims.length===2)b+=label(x,29,i?'Einstufig':'Zweistufig',18,c,'middle',700);
     if($('trail').checked&&f.burning&&s.t>0){
       for(let k=0;k<34;k++){const p=((k*17%97)/97+s.t*1.5)%1;b+=circle(x+Math.sin(k*23.1)*28*p,y+rocketBottom+p*55,2+2*(1-p),'#ffad70',(1-p)*.7);}
@@ -98,6 +98,10 @@ function budget(){
   if(s.pad>0)b+=bar('Bodenreaktion',s.pad,'#9eb0c7');
   if(mode==='compare')b+=bar('Einstufig: ideales Δv gesamt',idealTotal(sims[1].p),'#f5db79')+bar('Einstufig: tatsächliche Geschwindigkeit',sims[1].v,'#f5db79');
   $('budget').innerHTML=b;
+  const current=idealRows(s.p)[Math.min(s.i,s.ss.length-1)];
+  $('liveEquation').textContent=s.i>=s.ss.length?'Alle Brennphasen abgeschlossen. Ideale Δv addiert: '+fmt(s.dv,1)+' m/s.':'Aktuelle Brennphase '+(s.i+1)+': '+fmt(s.p.u)+' · ln('+fmt(current.before,1)+' / '+fmt(s.m,1)+') = '+fmt(s.p.u*Math.log(current.before/s.m),1)+' m/s';
+  $('events').textContent=s.events.length?s.events.map(e=>fmt(e.t,2)+' s: '+e.label).join(' · '):'Ereignisse: noch keine';
+  $('currentStage').textContent='Verbleibendes Treibmittel der aktuellen Stufe: '+fmt(s.fuel,1)+' kg. '+(s.p.gravity?'Modell: erforderliches u beim Start bei unverändertem Massenausstoß > '+fmt(100*G0/s.p.flow,1)+' m/s.':'Gravitation ausgeschaltet.');
   const p=cfg(),rows=[...idealRows({...p,stages:2}).map(r=>({...r,name:'Zweistufig · '+r.i})),...idealRows({...p,stages:1}).map(r=>({...r,name:'Einstufig'}))];
   $('stageTable').innerHTML='<table class="stage-table"><thead><tr><th>Modell / Brennphase</th><th>m vor / kg</th><th>m nach / kg</th><th>Abwurf / kg</th><th>Δv ideal / m/s</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+r.name+'</td><td>'+fmt(r.before)+'</td><td>'+fmt(r.after)+'</td><td>'+fmt(r.drop)+'</td><td>'+fmt(r.dv,1)+'</td></tr>').join('')+'<tr><th>Zweistufig gesamt</th><td></td><td></td><td></td><th>'+fmt(idealTotal({...p,stages:2}),1)+'</th></tr></tbody></table>';
 }
@@ -130,7 +134,7 @@ $('start').addEventListener('click',()=>{running=true;render();});
 $('pause').addEventListener('click',()=>{running=false;render();});
 $('step').addEventListener('click',()=>{step(.25);render();});
 $('reset').addEventListener('click',resetFlight);
-document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.preset;$('u').value=p==='weak'?200:600;$('flow').value=p==='weak'?1:2;$('gravity').checked=p!=='ideal';$('variableG').checked=false;$('drag').checked=false;resetFlight();}));
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.preset;$('u').value=p==='weak'?200:p==='late'?400:600;$('flow').value=p==='weak'?1:2;$('gravity').checked=p!=='ideal';$('variableG').checked=false;$('drag').checked=false;resetFlight();}));
 $('present').addEventListener('click',()=>{const on=$('shell').classList.toggle('present');$('present').textContent=on?'▣ Normalansicht':'▣ Präsentation';});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){running=false;pulseRun=false;render();drawRecoil();}});
 setMode('recoil');requestAnimationFrame(loop);
